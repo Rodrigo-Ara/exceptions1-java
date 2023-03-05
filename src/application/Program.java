@@ -7,7 +7,8 @@ import java.util.Scanner;
 
 import model.entities.Reservation;
 
-// SOLUÇÃO MUITO RUIM, POIS O TRATAMENTO OCORRE NO MÉTODO PRINCIPAL, JÁ Q DEVERIA ESTAR NA PRÓPRIA CLASSE Reservation
+// SOLUÇÃO (MUITO RUIM), POIS O TRATAMENTO OCORRE NO MÉTODO PRINCIPAL E NÃO NA CLASSE Reservation
+// PROBLEMA GRAVE DE DELEGAÇÃO.
 public class Program {
 	// meu método main não tem q tratar essa exceção, ela será propagada para o método que chama o main
 	public static void main(String[] args) throws ParseException {
