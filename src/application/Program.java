@@ -28,36 +28,32 @@ public class Program {
 		 if (!checkOut.after(checkIn)) { // se a data de checkOut não for inferior a checkIn eu não aceitarei
 			    System.out.print("Error in reservation: check-out date must be after check-in date");
 		 } else {
-			 	Reservation reservation = new Reservation(number, checkIn, checkOut);
-			    System.out.print("Reservation: " + reservation);
+			 Reservation reservation = new Reservation(number, checkIn, checkOut);
+			 System.out.print("Reservation: " + reservation);
 			    
 			    
-			    System.out.println();
-			    System.out.println("Enter data to update the reservation:");
-				System.out.print("Check-in date (dd/MM/yyyy): ");
-				checkIn = sdf.parse(sc.next());
-				System.out.print("Check-out date (dd/MM/yyyy): ");
-				checkOut = sdf.parse(sc.next());
+			 System.out.println();
+			 System.out.println("Enter data to update the reservation:");
+			 System.out.print("Check-in date (dd/MM/yyyy): ");
+			 checkIn = sdf.parse(sc.next());
+			 System.out.print("Check-out date (dd/MM/yyyy): ");
+			 checkOut = sdf.parse(sc.next());
 				
-			    // método para atualizar as datas
-				// regra de negócio
-				// datas para atualização não podem ser menores que a data atual
-			    Date now = new Date(); // cria data com horário de agora
-			    if (checkIn.before(now) || checkOut.before(now)) { // compara data checkIn e checkOut com a atual, só aceito se for falso
-			    	System.out.println("Error in reservation: check-out date must be after check-in date");
-			    }
-			    else if (!checkOut.after(checkIn)) {
-			    	System.out.print("Error in reservation: check-out date must be after check-in date");
-			    }
-			    else { // só atualizara se nenhum dos problemas anteriores ocorrerem
-			    	reservation.updateDates(checkIn, checkOut);
-					System.out.print("Reservation: " + reservation);
-			    }
-			    
-				
-				
+			 // método para atualizar as datas
+			 // regra de negócio
+			 // datas para atualização não podem ser menores que a data atual
+			 Date now = new Date(); // cria data com horário de agora
+			 if (checkIn.before(now) || checkOut.before(now)) { // compara data checkIn e checkOut com a atual, só aceito se for falso
+				 System.out.println("Error in reservation: check-out date must be after check-in date");
+			 }
+			 else if (!checkOut.after(checkIn)) {
+				 System.out.print("Error in reservation: check-out date must be after check-in date");
+			 }
+			 else { // só atualizara se nenhum dos problemas anteriores ocorrerem
+				 reservation.updateDates(checkIn, checkOut);
+				 System.out.print("Reservation: " + reservation);
+			 }
 		 }
-		 
 		
 		 sc.close();
 	}
