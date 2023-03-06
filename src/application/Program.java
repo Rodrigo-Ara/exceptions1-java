@@ -7,8 +7,8 @@ import java.util.Scanner;
 
 import model.entities.Reservation;
 
-// SOLUÇÃO (MUITO RUIM), POIS O TRATAMENTO OCORRE NO MÉTODO PRINCIPAL E NÃO NA CLASSE Reservation
-// PROBLEMA GRAVE DE DELEGAÇÃO.
+// SOLUÇÃO RUIM, LÓGICA DE VALIDAÇÃO DELEGADA PARA CLASSE Reservation, MÉTODO RETORNANDO String
+// PROBLEMA GRAVE DE DELEGAÇÃO amenizado, pois o responsável por saber a reserva é a classe Reservation
 public class Program {
 	// meu método main não tem q tratar essa exceção, ela será propagada para o método que chama o main
 	public static void main(String[] args) throws ParseException {
@@ -26,6 +26,7 @@ public class Program {
 		 System.out.print("Check-out date (dd/MM/yyyy): ");
 		 Date checkOut = sdf.parse(sc.next());
 		 
+		 // essa validação de instanciação deveria ser feita no construtor, não no programa principal
 		 if (!checkOut.after(checkIn)) { // se a data de checkOut não for inferior a checkIn eu não aceitarei
 			    System.out.print("Error in reservation: check-out date must be after check-in date");
 		 } else {
@@ -40,23 +41,18 @@ public class Program {
 			 System.out.print("Check-out date (dd/MM/yyyy): ");
 			 checkOut = sdf.parse(sc.next());
 				
-			 // método para atualizar as datas
-			 // regra de negócio
-			 // datas para atualização não podem ser menores que a data atual
-			 Date now = new Date(); // cria data com horário de agora
-			 if (checkIn.before(now) || checkOut.before(now)) { // compara data checkIn e checkOut com a atual, só aceito se for falso
-				 System.out.println("Error in reservation: check-out date must be after check-in date");
+			 // salva o retorno da chamada do método updateDates de reservation dentro da string error
+			 // se o retorno for diferente de nulo, é pq houve erro, retornando contendo o erro 
+			 // logo mostrarei a mensagem armazenada em error
+			 // porém se o retorno for NULO entrarei no else e será feito a reserva
+			 String error = reservation.updateDates(checkIn, checkOut);
+			 if(error != null) {
+				 System.err.println("Error in reservation: " + error);
 			 }
-			 else if (!checkOut.after(checkIn)) {
-				 System.out.print("Error in reservation: check-out date must be after check-in date");
-			 }
-			 else { // só atualizara se nenhum dos problemas anteriores ocorrerem
-				 reservation.updateDates(checkIn, checkOut);
+			 else {
 				 System.out.print("Reservation: " + reservation);
 			 }
 		 }
-		
 		 sc.close();
 	}
-
 }

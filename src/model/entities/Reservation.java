@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-// SOLUÇÃO MUITO RUIM, POIS O TRATAMENTO OCORRE NO MÉTODO PRINCIPAL, JÁ Q DEVERIA ESTAR NA PRÓPRIA CLASSE Reservation
+// SOLUÇÃO RUIM, LÓGICA DE VALIDAÇÃO DELEGADA PARA CLASSE Reservation, MÉTODO RETORNANDO String
 public class Reservation {
 	
 	private Integer roomNumber;
@@ -41,10 +41,22 @@ public class Reservation {
 		long diff = checkOut.getTime() - checkIn.getTime(); // .getTime retorna a quantidade em milisegundos da data
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS); // converte o valor de diff que estava em milissegundo para dias.
 	}
-
-	public void updateDates(Date checkIn, Date checkOut) {
+	
+	// método para atualizar as datas
+	public String updateDates(Date checkIn, Date checkOut) { // deixou de ser void e retornará string com o erro
+		// regra de negócio: datas para atualização não podem ser menores que a data atual 
+		Date now = new Date(); // cria data com horário de agora
+		// compara data checkIn e checkOut com a atual, só aceitando se for falso
+		if (checkIn.before(now) || checkOut.before(now)) { 
+			return "Reservation dates for update must be future dates";
+		}
+		if (!checkOut.after(checkIn)) { // ambos os returns retornam String com o erro
+			return "check-out date must be after check-in date";
+		}
+		// se passar, sem entrar nos ifs farei o checkIn e o checkOut e retornarei nulo, pois foi sem erro
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
+		return null; // se retorna nullo é porque não deu nenhum erro, mas se for String é pq teve erro
 	}
 	
 	@Override
