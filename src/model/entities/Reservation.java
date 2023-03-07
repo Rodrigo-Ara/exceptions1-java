@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import mode.exceptions.DomainException;
+
 // SOLUÇÃO RUIM, LÓGICA DE VALIDAÇÃO DELEGADA PARA CLASSE Reservation, MÉTODO RETORNANDO String
 public class Reservation {
 	
@@ -14,7 +16,13 @@ public class Reservation {
 	// tipo date e as entradas no formato dia/mes/ano, por isso o SimpleDateFormat para uso no toString
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // máscara de formatação da data
 	
+	// por ter mudado o DomainException de Exception para RuntimeException, 
+	// fico desobrigado a lançar throws DomainException no método
 	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+		// boa prática de programação defensiva, tratar as exceções no começo dos métodos 
+		if (!checkOut.after(checkIn)) { 
+			throw new DomainException ("check-out date must be after check-in date");
+		}
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
@@ -28,12 +36,12 @@ public class Reservation {
 		this.roomNumber = roomNumber;
 	}
 
-	// não houve o setCheckIn e setCheckOut pois o método updateDates é o responsável por alterá-los
-	public Date getCheckIn() { // set nao configurado, pois quem irá alterar data é o método
+	// não houve setCheckIn e setCheckOut pois o método updateDates é o responsável por alterá-los
+	public Date getCheckIn() { // set nao configurado, pois quem irá alterar data é o método updateDates
 		return checkIn;
 	}
 
-	public Date getCheckOut() { // set nao configurado, pois quem irá alterar data é o método
+	public Date getCheckOut() { // set nao configurado, pois quem irá alterar data é o método updateDates
 		return checkOut;
 	}
 	
@@ -43,20 +51,25 @@ public class Reservation {
 	}
 	
 	// método para atualizar as datas
-	public String updateDates(Date checkIn, Date checkOut) { // deixou de ser void e retornará string com o erro
+	// voltou a ser void para tratar a exceção
+	// devido ao throws DomainException este método  updateDates pode lançar exceção
+	// por ter mudado o DomainException de Exception para RuntimeException, 
+	// fico desobrigado a lançar throws DomainException no método
+	public void updateDates(Date checkIn, Date checkOut) { 
 		// regra de negócio: datas para atualização não podem ser menores que a data atual 
 		Date now = new Date(); // cria data com horário de agora
-		// compara data checkIn e checkOut com a atual, só aceitando se for falso
-		if (checkIn.before(now) || checkOut.before(now)) { 
-			return "Reservation dates for update must be future dates";
+		// lógica q compara data checkIn e checkOut com a atual, só aceitando se ambas forem falsas
+		if (checkIn.before(now) || checkOut.before(now)) { // checking ou checkout antes de agora?
+			// se houver erro, lançará exceção, nada de retornar mensagem com o erro
+			throw new DomainException ("Reservation dates for update must be future dates"); 
 		}
-		if (!checkOut.after(checkIn)) { // ambos os returns retornam String com o erro
-			return "check-out date must be after check-in date";
+		// lógica em que o checkout tem que ser depois do checking para atualização
+		if (!checkOut.after(checkIn)) { 
+			throw new DomainException ("check-out date must be after check-in date");
 		}
-		// se passar, sem entrar nos ifs farei o checkIn e o checkOut e retornarei nulo, pois foi sem erro
+		// se passar, sem entrar nos ifs farei o checkIn e o checkOut
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
-		return null; // se retorna nullo é porque não deu nenhum erro, mas se for String é pq teve erro
 	}
 	
 	@Override
